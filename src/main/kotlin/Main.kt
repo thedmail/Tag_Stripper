@@ -19,6 +19,7 @@ fun getCodeLabList(docRoot:String):MutableList<String> {
   println("Getting codelab list.")
   val fileListFile =
     File(docRoot.plus("/codelab_list.txt"))
+  val tagListFile=File(docRoot.plus("codelab_tags.txt"))
   val fileTree = File(docRoot).walkTopDown()
 
   // Create a string List to store all names of .md files
@@ -68,8 +69,15 @@ fun getCodeLabList(docRoot:String):MutableList<String> {
       val writer = BufferedWriter(OutputStreamWriter(outputStream))
 
       for (line in lines) {
+        var reachedIdLine=false
         counter++
         writer.write(line)
+        if (line.startsWith("id:"))
+          reachedIdLine=true
+        if (reachedIdLine) {
+          writer.write("\nkeyword:")
+          reachedIdLine=false
+        }
         if (counter < lines.size)
           writer.newLine()
       }
